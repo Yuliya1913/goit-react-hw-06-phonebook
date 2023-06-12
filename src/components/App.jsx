@@ -13,7 +13,7 @@ export const App = () => {
   //т.к.начальное значение useState contacts зависит от данных пришедших из localStorage, то в начальное значение записываем
   // функцию, которая вернет значения из localStorage или по умолчанию [], если данных не будет, функция выполнится один раз при первом рендере
   // (ленивая инициализация состояния)
-  const [, setContacts] = useState(() => {
+  const [,] = useState(() => {
     return JSON.parse(localStorage.getItem('contacts')) ?? [];
   });
 
