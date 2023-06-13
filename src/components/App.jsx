@@ -1,33 +1,20 @@
-import { useState, useEffect } from 'react';
 import { ContactForm } from 'components/ContactForm/ContactForm';
-// import { nanoid } from 'nanoid';
 import { Filter } from 'components/Filter/Filter';
 import { ContactsList } from 'components/ContactsList/ContactsList';
 import css from 'components/App.module.css';
-import { useSelector } from 'react-redux';
-import { selectContacts } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts, selectFilter } from 'redux/selectors';
+import { filterContact } from 'redux/contacts/contactsSlice';
 
 export const App = () => {
   const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
 
-  //т.к.начальное значение useState contacts зависит от данных пришедших из localStorage, то в начальное значение записываем
-  // функцию, которая вернет значения из localStorage или по умолчанию [], если данных не будет, функция выполнится один раз при первом рендере
-  // (ленивая инициализация состояния)
-  const [,] = useState(() => {
-    return JSON.parse(localStorage.getItem('contacts')) ?? [];
-  });
+  const dispatch = useDispatch();
 
-  const [filter, setFilter] = useState('');
-
-  // если изменились(обновились) данные(добавила или удалила контакт), то сохраняем итоговый список контактов в localStorage
-
-  useEffect(() => {
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
-
+  // инфа с инпута пришла и записываем в глобальный стейт
   const handleFilter = event => {
-    // в свойсво filter объекта контакта добавляем значение введенное в инпут для фильтра
-    setFilter(event.currentTarget.value);
+    dispatch(filterContact(event.currentTarget.value));
   };
 
   const getVisibleContacts = () => {
@@ -37,7 +24,7 @@ export const App = () => {
   };
 
   // записываем в отдельный массив контакты, которые отфильтровали для поиска из всех контактов по условию в инпуте
-  //  и записываем в качестве пропса для рендера списков контакта по условию, чтобы не менять исходный массив контактов
+  // , чтобы не менять исходный массив контактов
   const visibleTelephone = getVisibleContacts();
 
   const isContacts = contacts.length > 0;
@@ -48,14 +35,9 @@ export const App = () => {
       <ContactForm />
       <h2>Contacts</h2>
 
-      {isContacts && <Filter value={filter} onChange={handleFilter} />}
+      {isContacts && <Filter onChange={handleFilter} />}
 
-      {isContacts && (
-        <ContactsList
-          contacts={visibleTelephone}
-          // onDeleteContact={deleteContact}
-        />
-      )}
+      {isContacts && <ContactsList contacts={visibleTelephone} />}
     </div>
   );
 };

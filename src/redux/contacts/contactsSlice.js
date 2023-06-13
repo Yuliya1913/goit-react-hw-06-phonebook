@@ -1,26 +1,33 @@
 import { createSlice } from '@reduxjs/toolkit';
+import persistReducer from 'redux-persist/es/persistReducer';
+import storage from 'redux-persist/lib/storage';
 
 const contactsSlice = createSlice({
   name: 'contacts',
-  initialState: { items: [] },
+  initialState: {
+    items: [],
+    filter: '',
+  },
   reducers: {
     formSubmit: (state, action) => {
       state.items.push(action.payload);
     },
     deleteContact: (state, action) => {
-      //   этот способ если initialState: [], а не initialState: { contacts: [] }
-      //   const index = state.findIndex(contact => contact.id === action.payload);
-      //   state.splice(index, 1);
-
-      // если initialState: [], то нужно указывать явный возврат через ретерн
-      //  return (state = state.filter(contact => contact.id !== action.payload));
-
       state.items = state.items.filter(
         contact => contact.id !== action.payload
       );
     },
+    filterContact: (state, action) => {
+      state.filter = action.payload;
+    },
   },
 });
 
-export const contactsReduser = contactsSlice.reducer;
-export const { formSubmit, deleteContact } = contactsSlice.actions;
+export const persistedReducer = persistReducer(
+  { key: 'contacts', storage, whitelist: ['items'] },
+  contactsSlice.reducer
+);
+
+// export const contactsReduser = contactsSlice.reducer;
+export const { formSubmit, deleteContact, filterContact } =
+  contactsSlice.actions;
