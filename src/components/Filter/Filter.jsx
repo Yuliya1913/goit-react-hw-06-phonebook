@@ -1,10 +1,17 @@
 import css from 'components/Filter/Filter.module.css';
-import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { filterContact } from 'redux/contacts/contactsSlice';
 import { selectFilter } from 'redux/selectors';
 
-export const Filter = ({ value, onChange }) => {
+export const Filter = () => {
   const filter = useSelector(selectFilter);
+  const dispatch = useDispatch();
+
+  // инфа с инпута пришла и записываем в глобальный стейт
+  const handleFilter = event => {
+    dispatch(filterContact(event.currentTarget.value));
+  };
+
   return (
     <label htmlFor="" className={css.label}>
       Find contacts by name
@@ -12,13 +19,8 @@ export const Filter = ({ value, onChange }) => {
         className={css.filter}
         type="text"
         value={filter}
-        onChange={onChange}
+        onChange={handleFilter}
       />
     </label>
   );
-};
-
-Filter.propTypes = {
-  value: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
 };

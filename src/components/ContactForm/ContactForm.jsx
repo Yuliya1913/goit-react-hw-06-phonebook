@@ -39,7 +39,7 @@ export const ContactForm = () => {
       return;
     }
 
-    //   иначе отправляем экшен с данными
+    //   иначе отправляем экшен с данными в глобальный стэйт контактов
 
     dispatch(formSubmit({ name, number, id: nanoid() }));
 
